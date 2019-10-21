@@ -1,5 +1,6 @@
 using NickStrupat;
 using System;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using Xunit;
 
@@ -23,8 +24,9 @@ namespace Tests
 		[InlineData(9, 16)]
 		public void AllocateAlignedMemory(int alignment, int size)
 		{
+			var isNotWindows = !RuntimeInformation.IsOSPlatform(OSPlatform.Windows); 
 			var alignmentIsPowerOfTwo = Popcnt.PopCount((uint)alignment) == 1;
-			if (!alignmentIsPowerOfTwo)
+			if (!alignmentIsPowerOfTwo || (isNotWindows && (alignment % IntPtr.Size) != 0))
 				Assert.Throws<ArgumentException>(() => MarshalEx.AllocHGlobalAligned(size, alignment));
 			else
 				Assert.True(MarshalEx.AllocHGlobalAligned(size, alignment).ToInt64() % alignment == 0);
