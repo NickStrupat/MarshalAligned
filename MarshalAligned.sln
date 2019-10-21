@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29319.158
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalAligned", "MarshalAligned\MarshalAligned.csproj", "{489C6662-9540-4F52-BBCC-4CDD4D05AD25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{B75DBBB3-55E5-4218-A8AE-D379D6C73285}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{489C6662-9540-4F52-BBCC-4CDD4D05AD25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{489C6662-9540-4F52-BBCC-4CDD4D05AD25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{489C6662-9540-4F52-BBCC-4CDD4D05AD25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{489C6662-9540-4F52-BBCC-4CDD4D05AD25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B75DBBB3-55E5-4218-A8AE-D379D6C73285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75DBBB3-55E5-4218-A8AE-D379D6C73285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75DBBB3-55E5-4218-A8AE-D379D6C73285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75DBBB3-55E5-4218-A8AE-D379D6C73285}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {465BD871-13C0-4D12-B7E0-18A508766F68}
+	EndGlobalSection
+EndGlobal
