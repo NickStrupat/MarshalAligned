@@ -25,7 +25,7 @@ namespace Tests
 		public void AllocateAlignedMemory(int alignment, int size)
 		{
 			var isNotWindows = !RuntimeInformation.IsOSPlatform(OSPlatform.Windows); 
-			var alignmentIsPowerOfTwo = Popcnt.PopCount((uint)alignment) == 1;
+			var alignmentIsPowerOfTwo = IsPowerOfTwo((UInt64) alignment);
 			if (!alignmentIsPowerOfTwo || (isNotWindows && (alignment % IntPtr.Size) != 0))
 				Assert.Throws<ArgumentException>(() => MarshalEx.AllocHGlobalAligned(size, alignment));
 			else
@@ -37,6 +37,14 @@ namespace Tests
 		{
 			var aligned = MarshalEx.AllocHGlobalAligned(16, 64);
 			MarshalEx.FreeHGlobalAligned(aligned);
+		}
+
+		private static Boolean IsPowerOfTwo(UInt64 x)
+		{
+			if (Popcnt.X64.IsSupported)
+				return Popcnt.X64.PopCount(x) == 1;
+			else
+				return x != 0 & (x & (x - 1)) == 0;
 		}
 	}
 }
