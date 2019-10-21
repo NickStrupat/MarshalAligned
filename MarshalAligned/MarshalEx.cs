@@ -7,8 +7,6 @@ namespace NickStrupat
 	public static class MarshalEx
 	{
 		private static readonly Boolean IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-		private static readonly Boolean IsMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-		private static readonly Boolean IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
 		/// <summary>
 		/// Free aligned memory
@@ -18,17 +16,15 @@ namespace NickStrupat
 		{
 			if (IsWindows)
 				_aligned_free(alignedMemoryHandle);
-			else if (IsMacOS | IsLinux)
-				free(alignedMemoryHandle);
 			else
-				throw new PlatformNotSupportedException();
+				free(alignedMemoryHandle);
 		}
 
 		/// <summary>
 		/// Allocate aligned memory
 		/// </summary>
 		/// <param name="size">Size of the requested memory allocation, in bytes.</param>
-		/// <param name="alignment">The alignment value, which must be an integer power of 2.</param>
+		/// <param name="alignment">The alignment value, which must be an integer power of 2 (and a multiple of `System.IntPtr.Size` on POSIX platforms).</param>
 		/// <returns>A handle to aligned memory. Possibly zero if something has gone wrong.</returns>
 		public static IntPtr AllocHGlobalAligned(int size, int alignment)
 		{
@@ -43,7 +39,7 @@ namespace NickStrupat
 		/// Allocate aligned memory
 		/// </summary>
 		/// <param name="size">Size of the requested memory allocation, in bytes.</param>
-		/// <param name="alignment">The alignment value, which must be an integer power of 2.</param>
+		/// <param name="alignment">The alignment value, which must be an integer power of 2 (and a multiple of `System.IntPtr.Size` on POSIX platforms).</param>
 		/// <returns></returns>
 		public static IntPtr AllocHGlobalAligned(uint size, uint alignment)
 		{
@@ -59,16 +55,20 @@ namespace NickStrupat
 		{
 			if (IsWindows)
 				return _aligned_malloc(size, alignment);
-			if (IsLinux | IsMacOS)
-			{
-				IntPtr p;
-				posix_memalign(&p, alignment, size);
-				return p;
-			}
-			throw new PlatformNotSupportedException();
+
+			if (!IsMultipleOfIntPtrSize(alignment.ToUInt64()))
+				throw new ArgumentException("Alignment must be a multiple of `System.IntPtr.Size` on POSIX platforms");
+			IntPtr p = IntPtr.Zero;
+			posix_memalign(ref p, alignment, size);
+			return p;
 		}
 
-		private static bool IsPowerOfTwo(ulong x)
+		private static Boolean IsMultipleOfIntPtrSize(UInt64 x)
+		{
+			return x % (UInt64)IntPtr.Size == 0;
+		}
+
+		private static Boolean IsPowerOfTwo(UInt64 x)
 		{
 			return x != 0 & (x & (x - 1)) == 0;
 		}
@@ -79,10 +79,10 @@ namespace NickStrupat
 		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr _aligned_free(IntPtr memblock);
 
-		[DllImport("libc")]
-		private static extern unsafe IntPtr posix_memalign(IntPtr* memptr, UIntPtr alignment, UIntPtr size);
+		[DllImport("libc", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr posix_memalign(ref IntPtr memptr, UIntPtr alignment, UIntPtr size);
 
-		[DllImport("libc")]
+		[DllImport("libc", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void free(IntPtr ptr);
 	}
 }
